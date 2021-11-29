@@ -7,3 +7,5 @@ Instructions to run the code:
 2. In the application properties, enter the username and password for the Zendesk account you want to test. 
 3. Run the command "mvn spring-boot:run"
 4. Open the url http://localhost:8080 on the browser and you can start using the app.
+
+To start using any of the 2 functionalities again, type the url http://localhost:8080 in the browser again.
