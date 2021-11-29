@@ -22,7 +22,7 @@ class MobileTicketViewerApplicationTests {
 	String mockResponse;
 
 	@BeforeEach
-	public void setup(){
+	public void setup() throws ResponseNotFoundException{
 
 		mockResponse = "{\n" +
 				"    \"tickets\": [\n" +
@@ -99,7 +99,7 @@ class MobileTicketViewerApplicationTests {
 	}
 
 	@Test
-	public void fetchAllTicketsFromZendeskAPI() {
+	public void fetchAllTicketsFromZendeskAPI() throws ResponseNotFoundException {
 
 //				.thenReturn(responseEntity);
 		ZendeskTicket zendeskTicket = mobileTicketService.fetchAllTicketsFromZendeskAPI(null,
@@ -111,7 +111,7 @@ class MobileTicketViewerApplicationTests {
 	}
 
 	@Test
-	public void fetchAllTicketsFromPreviousPage() {
+	public void fetchAllTicketsFromPreviousPage() throws ResponseNotFoundException {
 
 		ZendeskTicket zendeskTicket = mobileTicketService.fetchAllTicketsFromZendeskAPI("faskjdw23423==",
 				null);
@@ -120,7 +120,7 @@ class MobileTicketViewerApplicationTests {
 	}
 
 	@Test
-	public void fetchAllTicketsFromNextPage() {
+	public void fetchAllTicketsFromNextPage() throws ResponseNotFoundException {
 
 		ZendeskTicket zendeskTicket = mobileTicketService.fetchAllTicketsFromZendeskAPI(null,
 				"sfddskf34kmsdf==");
@@ -129,7 +129,7 @@ class MobileTicketViewerApplicationTests {
 	}
 
 	@Test
-	public void fetchTicketByIdFromZendeskAPI() {
+	public void fetchTicketByIdFromZendeskAPI() throws ResponseNotFoundException {
 
 		String singleTicketMockResponse = "{\n" +
 				"    \"ticket\": {\n" +

@@ -12,8 +12,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -35,7 +33,8 @@ public class MobileTicketServiceImpl implements MobileTicketService {
     private Environment env;
 
     @Override
-    public ZendeskTicket fetchAllTicketsFromZendeskAPI(String beforeCursor, String afterCursor) {
+    public ZendeskTicket fetchAllTicketsFromZendeskAPI(String beforeCursor, String afterCursor)
+            throws ResponseNotFoundException {
         String fooResourceUrl;
         if (beforeCursor != null) {
             beforeCursor = beforeCursor.substring(1);
@@ -45,7 +44,6 @@ public class MobileTicketServiceImpl implements MobileTicketService {
         } else if (afterCursor != null) {
             afterCursor = afterCursor.substring(1);
             afterCursor = afterCursor.substring(0, afterCursor.length() - 1);
-            System.out.println(afterCursor);
             fooResourceUrl = zendeskTicketsAPIUrl + "?" + afterIdentifier +
                     afterCursor + pageSizeSpecifier;
         } else {
@@ -53,12 +51,16 @@ public class MobileTicketServiceImpl implements MobileTicketService {
                     = zendeskTicketsAPIUrl + "?" + pageSizeSpecifier;
         }
         HttpEntity<String> request = createHttpEntityRequest();
-        String account = null;
+        String responseBody = null;
         ResponseEntity<String> response = restTemplate.exchange(fooResourceUrl, HttpMethod.GET, request, String.class);
-        account = response.getBody();
+        responseBody = response.getBody();
+        if(responseBody == null || responseBody.isEmpty()) {
+
+            throw new ResponseNotFoundException("The response from Zendesk is not available.");
+        }
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(account);
+            JsonNode jsonNode = mapper.readTree(responseBody);
             List<TicketPojo> tickets = new ArrayList<>();
             for (int i = 0; i < jsonNode.get("tickets").size(); i++) {
                 String finalResponse = jsonNode.get("tickets").get(i).toString();
@@ -70,8 +72,8 @@ public class MobileTicketServiceImpl implements MobileTicketService {
             String beforeApiResponse = jsonNode.get("meta").get("before_cursor").toString();
             String afterApiResponse = jsonNode.get("meta").get("after_cursor").toString();
             ZendeskTicket zd = new ZendeskTicket();
-            zd.afterCursor = afterApiResponse;
             zd.beforeCursor = beforeApiResponse;
+            zd.afterCursor = afterApiResponse;
             zd.ticketPojos = tickets;
 
             return zd;
@@ -83,16 +85,20 @@ public class MobileTicketServiceImpl implements MobileTicketService {
     }
 
     @Override
-    public TicketPojo fetchTicketByIdFromZendeskAPI(String ticketID) {
+    public TicketPojo fetchTicketByIdFromZendeskAPI(String ticketID) throws ResponseNotFoundException {
 
         HttpEntity<String> request = createHttpEntityRequest();
         String fooResourceUrl
                 = zendeskTicketsAPIUrl + "/" + Integer.valueOf(ticketID);
         ResponseEntity<String> response = restTemplate.exchange(fooResourceUrl, HttpMethod.GET, request, String.class);
-        String account = response.getBody();
+        String responseBody = response.getBody();
+        if(responseBody == null || responseBody.isEmpty()) {
+
+            throw new ResponseNotFoundException("The response from Zendesk is not available.");
+        }
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(account);
+            JsonNode jsonNode = mapper.readTree(responseBody);
             String finalResponse = jsonNode.get("ticket").toString();
             TicketPojo ticket = mapper.readValue(finalResponse, TicketPojo.class);
             String dateTimeZ = jsonNode.get("ticket").get("created_at").toString();
@@ -121,7 +127,7 @@ public class MobileTicketServiceImpl implements MobileTicketService {
 
     private Date convertStringToDate(String dateReceived) {
 
-        LocalDateTime dateTime = LocalDateTime.parse(dateReceived.substring(1, dateReceived.length()-2));
+        LocalDateTime dateTime = LocalDateTime.parse(dateReceived.substring(1, dateReceived.length() - 2));
         Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
 
         return date;

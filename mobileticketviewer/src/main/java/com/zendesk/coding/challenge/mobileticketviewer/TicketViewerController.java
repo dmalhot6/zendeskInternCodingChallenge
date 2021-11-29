@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +38,20 @@ public class TicketViewerController {
             applicationError error = new applicationError();
             error.setErrorMsg("The credentials of the user trying to access are INVALID");
             model.addAttribute("errorApp", error);
+        } catch(ResponseNotFoundException e) {
+            applicationError error = new applicationError();
+            error.setErrorMsg(e.getMessage());
+            model.addAttribute("errorApp", error);
+        }catch (Exception e) {
+            applicationError error = new applicationError();
+            error.setErrorMsg("The service you are trying to reach is unavailable. Kindly try after a while.");
+            model.addAttribute("errorApp", error);
         }
     }
 
     @RequestMapping(value = "/getTicketByID", method = RequestMethod.GET)
     public void getTicketByID(@RequestParam(value = "ticketID") String ticketID, Model model)
-            throws JsonProcessingException {
+            throws JsonProcessingException, ResponseNotFoundException {
         try {
             TicketPojo ticketPojo = mobileTicketService.fetchTicketByIdFromZendeskAPI(ticketID);
             model.addAttribute("ticketname", ticketPojo);
@@ -50,6 +59,12 @@ public class TicketViewerController {
 
             applicationError error = new applicationError();
             error.setErrorMsg("The credentials of the user trying to access are INVALID");
+            model.addAttribute("errorApp", error);
+        } catch(ResponseNotFoundException e) {
+
+        } catch(Exception e) {
+            applicationError error = new applicationError();
+            error.setErrorMsg("The service you are trying to reach is unavailable. Kindly try after a while.");
             model.addAttribute("errorApp", error);
         }
     }
