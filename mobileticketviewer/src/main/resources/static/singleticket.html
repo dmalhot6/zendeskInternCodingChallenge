@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--    <script>-->
+<!--        function doFunction() {-->
+<!--            var x = document.getElementById("ticketID").value;-->
+
+<!--            const Http = new XMLHttpRequest();-->
+<!--            var url='http://localhost:8080/getTicketByID?ticketID='+x;-->
+<!--            Http.open("GET", url);-->
+<!--            Http.send();-->
+<!--            console.log(Http.responseText);-->
+<!--            Http.onreadystatechange = (e) => {-->
+<!--                console.log(Http.responseText)-->
+<!--            };-->
+<!--            prepareFrame();-->
+<!--        }-->
+<!--        function prepareFrame() {-->
+<!--            var iframe = document.createElement('iframe');-->
+<!--            var html = Http.responseText;-->
+<!--            document.body.appendChild(iframe);-->
+<!--            iframe.contentWindow.document.open();-->
+<!--            iframe.contentWindow.document.write(html);-->
+<!--            iframe.contentWindow.document.close();-->
+
+<!--        }-->
+<!--    </script>-->
+</head>
+<body>
+<form action="/getTicketByID" method="GET">
+    <label for="ticketID">Enter ticket ID</label><br>
+    <input type="text" id="ticketID" name="ticketID"><br>
+    <input type="submit" value="Submit">
+</form>
+<table id = "singleTicketTable">
+    <tr>
+    </tr>
+</table>
+</body>
+</html>

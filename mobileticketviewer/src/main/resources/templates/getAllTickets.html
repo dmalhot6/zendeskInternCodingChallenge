@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>View All Tickets</title>
+    <scrirpt src="https://code.jquery.com/jquery-3.6.0.min.js"></scrirpt>
+</head>
+<body>
+<table>
+    <tr>
+        <td>ID</td>
+        <td>Subject</td>
+        <td>Status</td>
+        <td>Created On</td>
+    </tr>
+    <tr th:each="ticket : ${zendesktickets?.ticketPojos}">
+        <td th:text="${ticket.id}"></td>
+        <td th:text="${ticket.subject}"></td>
+        <td th:text="${ticket.status}"></td>
+        <td th:text="${ticket.dateTime}"></td>
+    </tr>
+    <tr>
+        <td th:text="${errorApp?.errorMsg}"></td>
+    </tr>
+</table>
+<a id="beforeurl" href="/getAllTickets?beforeCursor=">Previous</a>
+<a id="nexturl" href="/getAllTickets?afterCursor=">Next</a>
+<script th:inline="javascript">
+    var bFore = [[${zendesktickets?.beforeCursor}]];
+    var aFter = [[${zendesktickets?.afterCursor}]];
+    var a = document.querySelector('a[href="/getAllTickets?afterCursor="]');
+    var b = "/getAllTickets?afterCursor="+aFter
+    if (a) {
+        a.setAttribute('href', b)
+        console.log(a)
+    }
+    var c = document.querySelector('a[href="/getAllTickets?beforeCursor="]');
+    var d = "/getAllTickets?beforeCursor="+bFore
+    if (c) {
+        c.setAttribute('href', d)
+        console.log(c)
+    }
+</script>
+</body>
+</html>
